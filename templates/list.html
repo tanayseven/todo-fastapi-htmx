@@ -1,0 +1,6 @@
+{% import "macros/list_item.html" as list_item %}
+<ul id="list">
+    {% for item in todo_list %}
+        {{ list_item.render(item) }}
+    {% endfor %}
+</ul>

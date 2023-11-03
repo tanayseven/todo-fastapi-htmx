@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block list %}
+{% include "list.html" %}
+<form
+    hx-post="/item/"
+    hx-target="#list"
+    hx-swap="afterend"
+>
+    <label>
+        <input type="text" name="text">
+    </label>
+    <button
+        hx-trigger="click"
+        hx-post="/item/"
+        hx-target="#list"
+        hx-swap="beforeend"
+    >Add new</button>
+</form>
+{% endblock %}

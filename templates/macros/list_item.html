@@ -1,0 +1,17 @@
+{% macro render(list_item) %}
+<li id="list-{{ list_item["id"] }}">
+    <span
+        class="note-text"
+        hx-on:dblclick="makeEditable(this)"
+    >{{ list_item["text"] }}</span>
+    <button
+        hx-post="/done/{{ list_item["id"] }}"
+    >Done</button>
+    <button
+        hx-trigger="click"
+        hx-delete="/item/{{ list_item["id"] }}"
+        hx-target="#list"
+        hx-swap="outerHTML"
+    >Delete</button>
+</li>
+{% endmacro %}
