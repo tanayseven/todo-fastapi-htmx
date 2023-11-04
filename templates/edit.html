@@ -1,0 +1,17 @@
+<li id="list-{{ list_item["id"] }}">
+    <label for="text-list-{{ list_item["id"] }}"></label>
+    <input
+        type="text"
+        class="note-text"
+        name="text"
+        id="text-list-{{ list_item["id"] }}"
+        value="{{ list_item["text"] }}"
+        contenteditable
+    >
+    <button
+        hx-patch="/item-edit/{{ list_item["id"] }}"
+        hx-trigger="click"
+        hx-target="#list-{{ list_item["id"] }}"
+        hx-include="[id='text-list-{{ list_item["id"] }}']"
+    >Save</button>
+</li>

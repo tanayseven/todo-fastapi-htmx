@@ -1,12 +1,23 @@
 {% macro render(list_item) %}
 <li id="list-{{ list_item["id"] }}">
     <span
-        class="note-text"
-        hx-on:dblclick="makeEditable(this)"
+        class="
+            note-text
+            {% if list_item["state"] == "DONE" %}done{% endif %}
+        "
+        hx-trigger="dblclick"
+        hx-get="/item/{{ list_item["id"] }}/edit"
+        hx-target="#list-{{ list_item["id"] }}"
+        hx-swap="outerHTML"
     >{{ list_item["text"] }}</span>
+    {% if list_item["state"] != "DONE" %}
     <button
-        hx-post="/done/{{ list_item["id"] }}"
+        hx-trigger="click"
+        hx-patch="/item/{{ list_item["id"] }}/done"
+        hx-target="#list-{{ list_item["id"] }}"
+        hx-swap="outerHTML"
     >Done</button>
+    {% endif %}
     <button
         hx-trigger="click"
         hx-delete="/item/{{ list_item["id"] }}"

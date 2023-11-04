@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -35,8 +35,45 @@ def delete_item(request: Request, item_id: int):
     return templates.TemplateResponse("list.html", {"request": request, "todo_list": todo_list})
 
 
-class ItemRequest(BaseModel):
-    text: str
+@app.get("/item-edit/{item_id}")
+def get_edit_item(request: Request, item_id: int):
+    global todo_list
+    list_item = [
+        item
+        for item in todo_list
+        if item["id"] == item_id
+    ]
+    if list_item == 0:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return templates.TemplateResponse("edit.html", {"request": request, "list_item": list_item[0]})
+
+
+@app.patch("/item/{item_id}/edit")
+def save_edited_item(request: Request, item_id: int, text: Annotated[str, Form()]):
+    global todo_list
+    list_item = [
+        item
+        for item in todo_list
+        if item["id"] == item_id
+    ]
+    if list_item == 0:
+        raise HTTPException(status_code=404, detail="Item not found")
+    list_item[0]["text"] = text
+    return templates.TemplateResponse("list_item.html", {"request": request, "list_item": list_item[0]})
+
+
+@app.patch("/item/{item_id}/done")
+def save_edited_item(request: Request, item_id: int):
+    global todo_list
+    list_item = [
+        item
+        for item in todo_list
+        if item["id"] == item_id
+    ]
+    if list_item == 0:
+        raise HTTPException(status_code=404, detail="Item not found")
+    list_item[0]["state"] = "DONE"
+    return templates.TemplateResponse("list_item.html", {"request": request, "list_item": list_item[0]})
 
 
 @app.post("/item/")
