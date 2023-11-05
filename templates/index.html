@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% block list %}
-{% include "list.html" %}
 <form
     hx-trigger="click"
     hx-post="/item/"
     hx-target="#list"
-    hx-swap="beforeend"
+    hx-swap="afterbegin"
     hx-on::after-request="this.reset()"
 >
     <label>
@@ -13,4 +12,5 @@
     </label>
     <button>Add new</button>
 </form>
+{% include "list.html" %}
 {% endblock %}

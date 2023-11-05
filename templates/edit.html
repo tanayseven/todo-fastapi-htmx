@@ -9,7 +9,7 @@
         contenteditable
     >
     <button
-        hx-patch="/item-edit/{{ list_item["id"] }}"
+        hx-patch="/item/{{ list_item["id"] }}/edit"
         hx-trigger="click"
         hx-target="#list-{{ list_item["id"] }}"
         hx-include="[id='text-list-{{ list_item["id"] }}']"
