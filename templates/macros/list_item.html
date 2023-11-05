@@ -1,14 +1,21 @@
 {% macro render(list_item) %}
-<li id="list-{{ list_item["id"] }}">
+<li class="
+        todo-list
+        {% if list_item["state"] != "DONE" %}todo-list-active{% endif %}
+    " id="list-{{ list_item["id"] }}">
+<div class="box">
     <span
         class="
             note-text
             {% if list_item["state"] == "DONE" %}done{% endif %}
+            {% if list_item["state"] != "DONE" %}undone-list-item{% endif %}
         "
-        hx-trigger="dblclick"
-        hx-get="/item/{{ list_item["id"] }}/edit"
-        hx-target="#list-{{ list_item["id"] }}"
-        hx-swap="outerHTML"
+        {% if list_item["state"] != "DONE" %}
+            hx-trigger="click"
+            hx-get="/item/{{ list_item["id"] }}/edit"
+            hx-target="#list-{{ list_item["id"] }}"
+            hx-swap="outerHTML"
+        {% endif %}
     >{{ list_item["text"] }}</span>
     {% if list_item["state"] != "DONE" %}
     <button
@@ -16,7 +23,8 @@
         hx-patch="/item/{{ list_item["id"] }}/done"
         hx-target="#list-{{ list_item["id"] }}"
         hx-swap="outerHTML"
-    >Done</button>
+        class="todo-item-button"
+    ><img class="todo-item-icon" src="/static/icons/check.svg" alt="Done todo item icon"></button>
     {% endif %}
     {% if list_item["state"] == "DONE" %}
     <button
@@ -24,13 +32,16 @@
         hx-patch="/item/{{ list_item["id"] }}/undo"
         hx-target="#list-{{ list_item["id"] }}"
         hx-swap="outerHTML"
-    >Undo</button>
+        class="todo-item-button"
+    ><img class="todo-item-icon" src="/static/icons/undo.svg" alt="Undo todo item icon"></button>
     {% endif %}
     <button
         hx-trigger="click"
         hx-delete="/item/{{ list_item["id"] }}"
         hx-target="#list"
         hx-swap="outerHTML"
-    >Delete</button>
+        class="todo-item-button"
+    ><img class="todo-item-icon" src="/static/icons/delete.svg" alt="Delete todo item icon"></button>
+</div>
 </li>
 {% endmacro %}

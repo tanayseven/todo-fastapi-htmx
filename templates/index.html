@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 {% block list %}
-<form
-    hx-trigger="click"
-    hx-post="/item/"
-    hx-target="#list"
-    hx-swap="afterbegin"
-    hx-on::after-request="this.reset()"
->
-    <label>
-        <input type="text" name="text">
-    </label>
-    <button>Add new</button>
-</form>
+<div class="box">
+    <form
+        hx-trigger="click from:button[id='add-new']"
+        hx-post="/item/"
+        hx-target="#list"
+        hx-swap="beforeend"
+        hx-on::after-request="this.reset()"
+    >
+        <label class="todo-add-new-item-container">
+            <input type="text" name="text" class="todo-item-new-text">
+            <button id="add-new" class="todo-item-button">
+                <img class="todo-item-icon" src="/static/icons/plus.svg" alt="Add new todo item icon">
+            </button>
+        </label>
+    </form>
+</div>
 {% include "list.html" %}
 {% endblock %}

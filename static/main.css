@@ -1,3 +1,72 @@
 .done {
     text-decoration: line-through;
 }
+
+.page-wrapper {
+    display: grid;
+}
+
+.content {
+    min-width: 200px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.title {
+    text-align: center;
+    font-size: 30px;
+}
+
+.box {
+    min-width: 200px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.todo-list {
+    list-style: none;
+    font-size: 20px;
+    text-align: center;
+}
+
+.todo-list-active {
+   background: white;
+   border: 1px solid transparent;
+}
+
+.todo-list-active:hover {
+   background: rgb(200, 200, 200);
+   border: 1px solid transparent;
+}
+
+.todo-add-new-item-container {
+    max-width: 100%;
+}
+
+.todo-item-new-text {
+    position: relative;
+    height: 25px;
+    font-size: 20px;
+    width: 80%;
+    vertical-align: middle
+}
+
+.todo-item-button {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    vertical-align: middle
+}
+
+.todo-item-icon {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.undone-list-item {
+    cursor: pointer;
+}
