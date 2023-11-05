@@ -1,6 +1,13 @@
-{% import "macros/list_item.html" as list_item %}
 <ul id="list">
-    {% for item in todo_list %}
-        {{ list_item.render(item) }}
+    {% for list_item in todo_list %}
+        {% if list_item["state"] == "DONE" %}
+        {% include "list_items/done.html" %}
+        {% endif %}
+        {% if list_item["state"] == "TODO" %}
+        {% include "list_items/todo.html" %}
+        {% endif %}
+        {% if list_item["state"] == "EDIT" %}
+        {% include "list_items/edit.html" %}
+        {% endif %}
     {% endfor %}
 </ul>

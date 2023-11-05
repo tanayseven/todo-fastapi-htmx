@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -45,7 +44,7 @@ def get_edit_item(request: Request, item_id: int):
     ]
     if list_item == 0:
         raise HTTPException(status_code=404, detail="Item not found")
-    return templates.TemplateResponse("edit.html", {"request": request, "list_item": list_item[0]})
+    return templates.TemplateResponse("list_items/edit.html", {"request": request, "list_item": list_item[0]})
 
 
 @app.patch("/item/{item_id}/edit")
@@ -59,7 +58,7 @@ def save_edited_item(request: Request, item_id: int, text: Annotated[str, Form()
     if list_item == 0:
         raise HTTPException(status_code=404, detail="Item not found")
     list_item[0]["text"] = text
-    return templates.TemplateResponse("list_item.html", {"request": request, "list_item": list_item[0]})
+    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": list_item[0]})
 
 
 @app.patch("/item/{item_id}/done")
@@ -73,7 +72,7 @@ def save_edited_item(request: Request, item_id: int):
     if list_item == 0:
         raise HTTPException(status_code=404, detail="Item not found")
     list_item[0]["state"] = "DONE"
-    return templates.TemplateResponse("list_item.html", {"request": request, "list_item": list_item[0]})
+    return templates.TemplateResponse("list_items/done.html", {"request": request, "list_item": list_item[0]})
 
 
 @app.patch("/item/{item_id}/undo")
@@ -87,7 +86,7 @@ def undo_item(request: Request, item_id: int):
     if list_item == 0:
         raise HTTPException(status_code=404, detail="Item not found")
     list_item[0]["state"] = "TODO"
-    return templates.TemplateResponse("list_item.html", {"request": request, "list_item": list_item[0]})
+    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": list_item[0]})
 
 
 @app.post("/item/")
@@ -100,4 +99,4 @@ def new_item(text: Annotated[str, Form()], request: Request):
         state="TODO",
     )
     todo_list.append(new_item)
-    return templates.TemplateResponse("list_item.html", {"request": request, "list_item": new_item})
+    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": new_item})

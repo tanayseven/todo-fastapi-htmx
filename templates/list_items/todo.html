@@ -1,0 +1,31 @@
+<li class="
+        todo-list
+        todo-list-active
+    " id="list-{{ list_item["id"] }}">
+<div class="box">
+    <span
+        class="
+            note-text
+            undone-list-item
+        "
+        hx-trigger="click"
+        hx-get="/item/{{ list_item["id"] }}/edit"
+        hx-target="#list-{{ list_item["id"] }}"
+        hx-swap="outerHTML"
+    >{{ list_item["text"] }}</span>
+    <button
+        hx-trigger="click"
+        hx-patch="/item/{{ list_item["id"] }}/done"
+        hx-target="#list-{{ list_item["id"] }}"
+        hx-swap="outerHTML"
+        class="todo-item-button"
+    ><img class="todo-item-icon" src="/static/icons/check.svg" alt="Done todo item icon"></button>
+    <button
+        hx-trigger="click"
+        hx-delete="/item/{{ list_item["id"] }}"
+        hx-target="#list"
+        hx-swap="outerHTML"
+        class="todo-item-button"
+    ><img class="todo-item-icon" src="/static/icons/delete.svg" alt="Delete todo item icon"></button>
+</div>
+</li>
