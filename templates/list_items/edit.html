@@ -1,19 +1,23 @@
-<li class="todo-list" id="list-{{ list_item["id"] }}">
+{% set enter_key="13" %}
+<li class="todo-list editable" id="list-{{ list_item["id"] }}">
     <div class="box">
     <label for="text-list-{{ list_item["id"] }}"></label>
-    <input
-        type="text"
-        class="todo-item-new-text"
-        name="text"
-        id="text-list-{{ list_item["id"] }}"
-        value="{{ list_item["text"] }}"
-    >
-    <button
-        hx-patch="/item/{{ list_item["id"] }}/edit"
-        hx-trigger="click"
-        hx-target="#list-{{ list_item["id"] }}"
-        hx-include="[id='text-list-{{ list_item["id"] }}']"
-        class="todo-item-button"
-    ><img class="todo-item-icon" src="/static/icons/save.svg" alt="Save the edited todo item icon"></button>
+        <input
+            type="text"
+            class="todo-item-edit"
+            name="text"
+            id="text-list-{{ list_item["id"] }}"
+            value="{{ list_item["text"] }}"
+        >
+    <span class="todo-buttons">
+        <button
+            hx-patch="/item/{{ list_item["id"] }}/edit"
+            hx-trigger="click,keyup[keyCode=={{ enter_key }}] from:#text-list-{{ list_item["id"] }}"
+            hx-target="#list-{{ list_item["id"] }}"
+            hx-include="[id='text-list-{{ list_item["id"] }}']"
+            hx-swap="outerHTML"
+            class="todo-item-button"
+        ><img class="todo-item-icon" src="/static/icons/save.svg" alt="Save the edited todo item icon"></button>
+    </span>
     </div>
 </li>

@@ -1,14 +1,19 @@
 .done {
     text-decoration: line-through;
+    color: rgb(120, 120, 120);
+}
+
+* {
+    font-family: "Comic Sans MS", sans-serif;
 }
 
 .page-wrapper {
+    margin: auto;
     display: grid;
 }
 
 .content {
-    min-width: 200px;
-    max-width: 500px;
+    width: 500px;
     margin: 0 auto;
 }
 
@@ -20,51 +25,112 @@
 .box {
     min-width: 200px;
     max-width: 500px;
+    padding: 2px;
     margin: 0 auto;
+}
+
+#list {
+    text-indent: 0;
+    margin: 30px 0 0;
+    padding: 0;
+    display: grid;
+    grid-gap: 10px;
+    list-style-type: none;
 }
 
 .todo-list {
     list-style: none;
     font-size: 20px;
     text-align: center;
+    border: rgb(150, 150, 150) solid 1px;
+}
+
+.todo-list.editable {
+    border: dashed;
+}
+
+li.todo-list > div.box {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+}
+
+.note-text {
+    padding: 3px;
+    vertical-align: center;
+}
+
+.todo-list:hover {
+   background: rgb(230, 230, 230);
+   border: 1px solid rgb(230, 230, 230);
 }
 
 .todo-list-active {
    background: white;
-   border: 1px solid transparent;
 }
 
 .todo-list-active:hover {
-   background: rgb(200, 200, 200);
-   border: 1px solid transparent;
+   background: rgb(150, 150, 150);
+   cursor: pointer;
+   border: 1px solid rgb(150, 150, 150);
 }
 
 .todo-add-new-item-container {
-    max-width: 100%;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    grid-auto-flow: column;
+    grid-gap: 10px;
+}
+
+.todo-add-new-item-container > label {
+    width: 100%;
+}
+
+.todo-buttons {
+    align-self: end;
 }
 
 .todo-item-new-text {
     position: relative;
-    height: 25px;
+    height: 26px;
+    width: 100%;
     font-size: 20px;
-    width: 80%;
+    border: gray dashed;
     vertical-align: middle
+}
+
+.todo-item-edit {
+    position: relative;
+    height: 28px;
+    width: 100%;
+    font-size: 20px;
+    vertical-align: middle;
+    border: none;
+}
+
+.todo-item-edit:focus {
+  border: green dashed;
 }
 
 .todo-item-button {
-    position: relative;
     width: 32px;
     height: 32px;
-    vertical-align: middle
+    padding: 5px;
+    background: rgb(200, 200, 200);
+    border: none;
+    cursor: pointer;
+}
+
+.todo-item-button:hover {
+    background: white;
+    transition: 0.7s;
 }
 
 .todo-item-icon {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    display: flex;
+    width: 22px;
+    height: 22px;
 }
 
 .undone-list-item {

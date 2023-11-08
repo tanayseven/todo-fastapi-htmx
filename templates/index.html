@@ -7,13 +7,14 @@
         hx-target="#list"
         hx-swap="beforeend"
         hx-on::after-request="this.reset()"
+        class="todo-add-new-item-container"
     >
-        <label class="todo-add-new-item-container">
+        <label>
             <input type="text" name="text" class="todo-item-new-text">
-            <button id="add-new" class="todo-item-button">
-                <img class="todo-item-icon" src="/static/icons/plus.svg" alt="Add new todo item icon">
-            </button>
         </label>
+        <button id="add-new" class="todo-item-button">
+            <img class="todo-item-icon" src="/static/icons/plus.svg" alt="Add new todo item icon">
+        </button>
     </form>
 </div>
 {% include "list.html" %}
