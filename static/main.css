@@ -3,8 +3,13 @@
     color: rgb(120, 120, 120);
 }
 
+@font-face {
+  font-family: Itim;
+  src: url(/static/Itim-Regular.ttf);
+}
+
 * {
-    font-family: "Comic Sans MS", sans-serif;
+    font-family: Itim, sans-serif;
 }
 
 .page-wrapper {
@@ -61,8 +66,9 @@ li.todo-list > div.box {
 }
 
 .todo-list:hover {
-   background: rgb(230, 230, 230);
-   border: 1px solid rgb(230, 230, 230);
+    background: rgb(230, 230, 230);
+    border: 1px solid rgb(230, 230, 230);
+    transition: 0.7s;
 }
 
 .todo-list-active {
@@ -73,6 +79,7 @@ li.todo-list > div.box {
    background: rgb(150, 150, 150);
    cursor: pointer;
    border: 1px solid rgb(150, 150, 150);
+   transition: 0.7s;
 }
 
 .todo-add-new-item-container {

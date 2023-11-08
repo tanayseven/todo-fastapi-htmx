@@ -1,12 +1,12 @@
 <ul id="list">
     {% for list_item in todo_list %}
-        {% if list_item["state"] == "DONE" %}
+        {% if list_item["state"] == state.DONE %}
         {% include "list_items/done.html" %}
         {% endif %}
-        {% if list_item["state"] == "TODO" %}
+        {% if list_item["state"] == state.TODO %}
         {% include "list_items/todo.html" %}
         {% endif %}
-        {% if list_item["state"] == "EDIT" %}
+        {% if list_item["state"] == state.EDIT %}
         {% include "list_items/edit.html" %}
         {% endif %}
     {% endfor %}

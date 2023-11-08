@@ -1,102 +1,93 @@
+from enum import StrEnum, auto
 from typing import Annotated
 
-from fastapi import FastAPI, Request, Form, HTTPException
+from fastapi import FastAPI, Request, Form, HTTPException, Depends
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
+
+from src.repository import get_db
+from src.schema import ListItem
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-todo_list = [
-    dict(id=1, text="Buy Milk", state="DONE"),
-    dict(id=2, text="Clean the room", state="TODO"),
-    dict(id=3, text="Do the laundry", state="TODO"),
-    dict(id=4, text="Buy Eggs", state="DONE"),
-    dict(id=5, text="Write blog post", state="TODO"),
-]
+
+class State(StrEnum):
+    TODO = auto()
+    EDIT = auto()
+    DONE = auto()
 
 
-@app.get("/")
-def get_list(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "todo_list": todo_list})
+@app.get("/", response_class=HTMLResponse)
+def get_list(request: Request, db: Session = Depends(get_db)):
+    todo_list = db.query(ListItem).all()
+    if len(todo_list) == 0:
+        for item in todo_list:
+            db.add(item)
+        db.commit()
+    return templates.TemplateResponse("index.html", {"request": request, "todo_list": todo_list, "state": State})
 
 
-@app.delete("/item/{item_id}")
-def delete_item(request: Request, item_id: int):
-    global todo_list
-    todo_list = [
-        item
-        for item in todo_list
-        if item["id"] != item_id
-    ]
-    return templates.TemplateResponse("list.html", {"request": request, "todo_list": todo_list})
+@app.delete("/item/{item_id}", response_class=HTMLResponse)
+def delete_item(request: Request, item_id: int, db: Session = Depends(get_db)):
+    db.query(ListItem).filter(ListItem.id == item_id).delete()
+    db.commit()
+    todo_list = db.query(ListItem).all()
+    print(todo_list)
+    return templates.TemplateResponse("list.html", {"request": request, "todo_list": todo_list, "state": State})
 
 
-@app.get("/item/{item_id}/edit")
-def get_edit_item(request: Request, item_id: int):
-    global todo_list
-    list_item = [
-        item
-        for item in todo_list
-        if item["id"] == item_id
-    ]
-    if list_item == 0:
+@app.get("/item/{item_id}/edit", response_class=HTMLResponse)
+def get_edit_item(request: Request, item_id: int, db: Session = Depends(get_db)):
+    list_item: ListItem = db.query(ListItem).filter(ListItem.id == item_id).one_or_none()
+    if list_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    return templates.TemplateResponse("list_items/edit.html", {"request": request, "list_item": list_item[0]})
+    list_item.state = State.EDIT
+    db.commit()
+    return templates.TemplateResponse("list_items/edit.html", {"request": request, "list_item": list_item, "state": State})
 
 
-@app.patch("/item/{item_id}/edit")
-def save_edited_item(request: Request, item_id: int, text: Annotated[str, Form()]):
-    global todo_list
-    list_item = [
-        item
-        for item in todo_list
-        if item["id"] == item_id
-    ]
-    if list_item == 0:
+@app.patch("/item/{item_id}/edit", response_class=HTMLResponse)
+def save_edited_item(request: Request, item_id: int, text: Annotated[str, Form()], db: Session = Depends(get_db)):
+    list_item: ListItem = db.query(ListItem).filter(ListItem.id == item_id).one_or_none()
+    if list_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    list_item[0]["text"] = text
-    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": list_item[0]})
+    list_item.state = State.TODO
+    list_item.text = text
+    db.commit()
+    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": list_item, "state": State})
 
 
-@app.patch("/item/{item_id}/done")
-def save_edited_item(request: Request, item_id: int):
-    global todo_list
-    list_item = [
-        item
-        for item in todo_list
-        if item["id"] == item_id
-    ]
-    if list_item == 0:
+@app.patch("/item/{item_id}/done", response_class=HTMLResponse)
+def save_edited_item(request: Request, item_id: int, db: Session = Depends(get_db)):
+    list_item: ListItem = db.query(ListItem).filter(ListItem.id == item_id).one_or_none()
+    if list_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    list_item[0]["state"] = "DONE"
-    return templates.TemplateResponse("list_items/done.html", {"request": request, "list_item": list_item[0]})
+    list_item.state = State.DONE
+    db.commit()
+    return templates.TemplateResponse("list_items/done.html", {"request": request, "list_item": list_item, "state": State})
 
 
-@app.patch("/item/{item_id}/undo")
-def undo_item(request: Request, item_id: int):
-    global todo_list
-    list_item = [
-        item
-        for item in todo_list
-        if item["id"] == item_id
-    ]
-    if list_item == 0:
+@app.patch("/item/{item_id}/undo", response_class=HTMLResponse)
+def undo_item(request: Request, item_id: int, db: Session = Depends(get_db)):
+    list_item: ListItem = db.query(ListItem).filter(ListItem.id == item_id).one_or_none()
+    if list_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    list_item[0]["state"] = "TODO"
-    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": list_item[0]})
+    list_item.state = State.TODO
+    db.commit()
+    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": list_item, "state": State})
 
 
-@app.post("/item/")
-def new_item(text: Annotated[str, Form()], request: Request):
-    global todo_list
-    max_item_id = max(todo_list, key=lambda item: item["id"])["id"]
-    new_item = dict(
-        id=max_item_id + 1,
+@app.post("/item/", response_class=HTMLResponse)
+def new_item(text: Annotated[str, Form()], request: Request, db: Session = Depends(get_db)):
+    new_item = ListItem(
         text=text,
-        state="TODO",
+        state=State.TODO,
     )
-    todo_list.append(new_item)
-    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": new_item})
+    db.add(new_item)
+    db.commit()
+    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": new_item, "state": State})
