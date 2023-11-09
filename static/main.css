@@ -54,10 +54,14 @@
     border: dashed;
 }
 
-li.todo-list > div.box {
+li.todo-list {
     display: flex;
     flex-flow: row;
     justify-content: space-between;
+}
+
+li.todo-list > div.box {
+    width: 70%;
 }
 
 .note-text {
@@ -142,4 +146,11 @@ li.todo-list > div.box {
 
 .undone-list-item {
     cursor: pointer;
+}
+
+.item-not-found {
+    position: fixed;
+    top: 250px;
+    left: 30px;
+    background: rgb(200, 200, 200);
 }

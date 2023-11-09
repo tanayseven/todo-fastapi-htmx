@@ -1,6 +1,8 @@
 <li class="
         todo-list
-    " id="list-{{ list_item["id"] }}">
+    "
+    id="list-{{ list_item["id"] }}"
+>
 <div class="box">
     <span
         class="
@@ -8,12 +10,14 @@
             done
         "
     >{{ list_item["text"] }}</span>
-    <span class="todo-buttons">
+</div>
+    <span class="todo-buttons" hx-ext="response-targets">
         <button
             hx-trigger="click"
             hx-patch="/item/{{ list_item["id"] }}/undo"
             hx-target="#list-{{ list_item["id"] }}"
             hx-swap="outerHTML"
+            hx-target-error="#any-errors"
             class="todo-item-button"
         ><img class="todo-item-icon" src="/static/icons/undo.svg" alt="Undo todo item icon"></button>
         <button
@@ -24,5 +28,4 @@
             class="todo-item-button"
         ><img class="todo-item-icon" src="/static/icons/delete.svg" alt="Delete todo item icon"></button>
     </span>
-</div>
 </li>

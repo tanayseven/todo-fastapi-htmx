@@ -9,6 +9,7 @@
             id="text-list-{{ list_item["id"] }}"
             value="{{ list_item["text"] }}"
         >
+</div>
     <span class="todo-buttons">
         <button
             hx-patch="/item/{{ list_item["id"] }}/edit"
@@ -19,5 +20,4 @@
             class="todo-item-button"
         ><img class="todo-item-icon" src="/static/icons/save.svg" alt="Save the edited todo item icon"></button>
     </span>
-    </div>
 </li>

@@ -22,6 +22,15 @@ class State(StrEnum):
     DONE = auto()
 
 
+@app.middleware("http")
+async def exception_middleware(request, call_next):
+    try:
+        return await call_next(request)
+    except Exception:
+        return templates.TemplateResponse("dialogs/server_error.html",
+                                          {"request": request}, status_code=500)
+
+
 @app.get("/", response_class=HTMLResponse)
 def get_list(request: Request, db: Session = Depends(get_db)):
     todo_list = db.query(ListItem).all()
@@ -48,7 +57,8 @@ def get_edit_item(request: Request, item_id: int, db: Session = Depends(get_db))
         raise HTTPException(status_code=404, detail="Item not found")
     list_item.state = State.EDIT
     db.commit()
-    return templates.TemplateResponse("list_items/edit.html", {"request": request, "list_item": list_item, "state": State})
+    return templates.TemplateResponse("list_items/edit.html",
+                                      {"request": request, "list_item": list_item, "state": State})
 
 
 @app.patch("/item/{item_id}/edit", response_class=HTMLResponse)
@@ -59,17 +69,20 @@ def save_edited_item(request: Request, item_id: int, text: Annotated[str, Form()
     list_item.state = State.TODO
     list_item.text = text
     db.commit()
-    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": list_item, "state": State})
+    return templates.TemplateResponse("list_items/todo.html",
+                                      {"request": request, "list_item": list_item, "state": State})
 
 
 @app.patch("/item/{item_id}/done", response_class=HTMLResponse)
 def save_edited_item(request: Request, item_id: int, db: Session = Depends(get_db)):
     list_item: ListItem = db.query(ListItem).filter(ListItem.id == item_id).one_or_none()
     if list_item is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        return templates.TemplateResponse("dialogs/item_not_found.html",
+                                          {"request": request, "list_item": list_item, "state": State}, status_code=404)
     list_item.state = State.DONE
     db.commit()
-    return templates.TemplateResponse("list_items/done.html", {"request": request, "list_item": list_item, "state": State})
+    return templates.TemplateResponse("list_items/done.html",
+                                      {"request": request, "list_item": list_item, "state": State})
 
 
 @app.patch("/item/{item_id}/undo", response_class=HTMLResponse)
@@ -79,7 +92,8 @@ def undo_item(request: Request, item_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Item not found")
     list_item.state = State.TODO
     db.commit()
-    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": list_item, "state": State})
+    return templates.TemplateResponse("list_items/todo.html",
+                                      {"request": request, "list_item": list_item, "state": State})
 
 
 @app.post("/item/", response_class=HTMLResponse)
@@ -90,4 +104,5 @@ def new_item(text: Annotated[str, Form()], request: Request, db: Session = Depen
     )
     db.add(new_item)
     db.commit()
-    return templates.TemplateResponse("list_items/todo.html", {"request": request, "list_item": new_item, "state": State})
+    return templates.TemplateResponse("list_items/todo.html",
+                                      {"request": request, "list_item": new_item, "state": State})
