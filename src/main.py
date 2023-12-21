@@ -6,11 +6,24 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
+from sqladmin import Admin, ModelView
 
+from src.database import engine, Base
 from src.repository import get_db
 from src.schema import ListItem
 
+Base.metadata.create_all(engine)
+
 app = FastAPI()
+admin = Admin(app, engine, title="Admin")
+
+
+class ListItemView(ModelView, model=ListItem):
+    column_list = [ListItem.id, ListItem.text, ListItem.state]
+
+
+admin.add_view(ListItemView)
+
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -32,26 +45,27 @@ async def exception_middleware(request, call_next):
 
 
 @app.get("/", response_class=HTMLResponse)
-def get_list(request: Request, db: Session = Depends(get_db)):
+async def get_list(request: Request, db: Session = Depends(get_db)):
+    print("Called roooooooot")
     todo_list = db.query(ListItem).all()
     if len(todo_list) == 0:
         for item in todo_list:
             db.add(item)
         db.commit()
-    return templates.TemplateResponse("index.html", {"request": request, "todo_list": todo_list, "state": State})
+    return templates.TemplateResponse("main.html", {"request": request, "todo_list": todo_list, "state": State})
 
 
 @app.delete("/item/{item_id}", response_class=HTMLResponse)
-def delete_item(request: Request, item_id: int, db: Session = Depends(get_db)):
+async def delete_item(request: Request, item_id: int, db: Session = Depends(get_db)):
     db.query(ListItem).filter(ListItem.id == item_id).delete()
     db.commit()
     todo_list = db.query(ListItem).all()
     print(todo_list)
-    return templates.TemplateResponse("list.html", {"request": request, "todo_list": todo_list, "state": State})
+    return templates.TemplateResponse("todo_list.html", {"request": request, "todo_list": todo_list, "state": State})
 
 
 @app.get("/item/{item_id}/edit", response_class=HTMLResponse)
-def get_edit_item(request: Request, item_id: int, db: Session = Depends(get_db)):
+async def get_edit_item(request: Request, item_id: int, db: Session = Depends(get_db)):
     list_item: ListItem = db.query(ListItem).filter(ListItem.id == item_id).one_or_none()
     if list_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -62,7 +76,7 @@ def get_edit_item(request: Request, item_id: int, db: Session = Depends(get_db))
 
 
 @app.patch("/item/{item_id}/edit", response_class=HTMLResponse)
-def save_edited_item(request: Request, item_id: int, text: Annotated[str, Form()], db: Session = Depends(get_db)):
+async def save_edited_item(request: Request, item_id: int, text: Annotated[str, Form()], db: Session = Depends(get_db)):
     list_item: ListItem = db.query(ListItem).filter(ListItem.id == item_id).one_or_none()
     if list_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -74,7 +88,7 @@ def save_edited_item(request: Request, item_id: int, text: Annotated[str, Form()
 
 
 @app.patch("/item/{item_id}/done", response_class=HTMLResponse)
-def save_edited_item(request: Request, item_id: int, db: Session = Depends(get_db)):
+async def save_edited_item(request: Request, item_id: int, db: Session = Depends(get_db)):
     list_item: ListItem = db.query(ListItem).filter(ListItem.id == item_id).one_or_none()
     if list_item is None:
         return templates.TemplateResponse("dialogs/item_not_found.html",
@@ -86,7 +100,7 @@ def save_edited_item(request: Request, item_id: int, db: Session = Depends(get_d
 
 
 @app.patch("/item/{item_id}/undo", response_class=HTMLResponse)
-def undo_item(request: Request, item_id: int, db: Session = Depends(get_db)):
+async def undo_item(request: Request, item_id: int, db: Session = Depends(get_db)):
     list_item: ListItem = db.query(ListItem).filter(ListItem.id == item_id).one_or_none()
     if list_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -97,7 +111,7 @@ def undo_item(request: Request, item_id: int, db: Session = Depends(get_db)):
 
 
 @app.post("/item/", response_class=HTMLResponse)
-def new_item(text: Annotated[str, Form()], request: Request, db: Session = Depends(get_db)):
+async def new_item(text: Annotated[str, Form()], request: Request, db: Session = Depends(get_db)):
     new_item = ListItem(
         text=text,
         state=State.TODO,
