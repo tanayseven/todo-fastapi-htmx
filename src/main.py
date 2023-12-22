@@ -47,12 +47,7 @@ async def exception_middleware(request, call_next):
 
 @app.get("/", response_class=HTMLResponse)
 async def get_list(request: Request, db: Session = Depends(get_db)):
-    print("Called roooooooot")
     todo_list = db.query(ListItem).all()
-    if len(todo_list) == 0:
-        for item in todo_list:
-            db.add(item)
-        db.commit()
     return templates.TemplateResponse(
         "main.html", {"request": request, "todo_list": todo_list, "state": State}
     )
@@ -63,9 +58,8 @@ async def delete_item(request: Request, item_id: int, db: Session = Depends(get_
     db.query(ListItem).filter(ListItem.id == item_id).delete()
     db.commit()
     todo_list = db.query(ListItem).all()
-    print(todo_list)
     return templates.TemplateResponse(
-        "todo_list.html", {"request": request, "todo_list": todo_list, "state": State}
+        "todo-list.html", {"request": request, "todo_list": todo_list, "state": State}
     )
 
 

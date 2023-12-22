@@ -148,6 +148,10 @@ li.todo-list > div.box {
     cursor: pointer;
 }
 
+.dialog {
+    cursor: pointer;
+}
+
 .item-not-found {
     position: fixed;
     top: 250px;

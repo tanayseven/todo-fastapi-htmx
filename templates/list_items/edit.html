@@ -17,6 +17,7 @@
             hx-target="#list-{{ list_item["id"] }}"
             hx-include="[id='text-list-{{ list_item["id"] }}']"
             hx-swap="outerHTML"
+            hx-target-error="#any-errors"
             class="todo-item-button"
         ><img class="todo-item-icon" src="/static/icons/save.svg" alt="Save the edited todo item icon"></button>
     </span>

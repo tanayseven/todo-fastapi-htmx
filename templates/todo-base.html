@@ -5,7 +5,10 @@
     <link rel="stylesheet" href="/static/main.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
+<body
+        hx-ext="response-targets"
+        _="on htmx:sendError set #connectivity-error.open to true"
+>
     <div class="page-wrapper">
     <div class="content">
         <div class="title">
@@ -16,6 +19,15 @@
     </div>
     <div id="any-errors">
     </div>
+    <dialog
+            id="connectivity-error"
+            class="dialog item-not-found"
+            _="
+                on click transition opacity to 0 over 0.3s then set my.open to false then set my.style.opacity to 1
+            "
+    >
+        <p>A network error occurred. Check if you have internet connectivity</p>
+    </dialog>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js"></script>
     <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>

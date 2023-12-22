@@ -1,7 +1,12 @@
+<div id="any-errors">
 <dialog
-        class="item-not-found"
+        class="dialog item-not-found"
         open
-        _="on load wait 1s then transition opacity to 0 then remove me"
+        _="
+            on load wait 3s then transition opacity to 0 over 0.3s then remove me
+            on click transition opacity to 0 over 0.3s then remove me
+        "
 >
   <p>Some server error occurred</p>
 </dialog>
+</div>
