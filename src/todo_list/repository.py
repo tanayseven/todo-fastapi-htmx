@@ -4,7 +4,7 @@ from typing import Sequence
 from returns.result import Result, Success, Failure
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.schema import ListItem, State
+from src.todo_list.schema import ListItem, State
 
 
 class ItemError(StrEnum):
