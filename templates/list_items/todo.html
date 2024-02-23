@@ -26,6 +26,7 @@
             hx-patch="/item/{{ list_item["id"] }}/done"
             hx-target="#list-{{ list_item["id"] }}"
             hx-swap="outerHTML"
+            hx-indicator=".my-indicator"
             hx-target-error="#any-errors"
             class="todo-item-button"
         ><img class="todo-item-icon" src="/static/icons/check.svg" alt="Done todo item icon"></button>
@@ -33,6 +34,7 @@
             hx-trigger="click"
             hx-delete="/item/{{ list_item["id"] }}"
             hx-target="#list"
+            hx-indicator=".my-indicator"
             hx-swap="outerHTML"
             hx-target-error="#any-errors"
             class="todo-item-button"
