@@ -5,7 +5,7 @@ from sqladmin import Admin
 from src.database import engine
 from src.ext import templates
 from src.todo_list.admin import ListItemView
-from src.user.admin import UserView
+# from src.user.admin import UserView
 from src.todo_list.routes import router as todo_list_router
 
 app = FastAPI()
@@ -17,7 +17,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(todo_list_router)
 
 # All the admin views
-admin.add_view(UserView)
+# admin.add_view(UserView)
 admin.add_view(ListItemView)
 
 
